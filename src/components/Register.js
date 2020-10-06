@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { register } from '../utils/mestoAuth.js'
 
-const Register = ({ setIsRegisterPopupOpen }) => {
+const Register = ({ handleRegisterClick, isOpen }) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,18 +17,18 @@ const Register = ({ setIsRegisterPopupOpen }) => {
     evt.preventDefault();
     register(email, password)
       .then((res) => {
+        console.log(res)
         if(res.data._id) {
-          history.push('/signin');
           setIsSuccess(true);
+          handleRegisterClick();
+          history.push('/signin');
         } else {
+          handleRegisterClick();
           console.error('Error');
         }
       })
       .catch(err => {
         console.log(err);
-      })
-      .finally(() => {
-        setIsRegisterPopupOpen(true);
       })
   }
 

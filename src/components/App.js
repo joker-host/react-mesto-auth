@@ -84,7 +84,7 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setSelectedCard(null);
     SetIsDeleteCardsPopupOpen(false);
-    handleRegisterClick(false);
+    setIsRegisterPopupOpen(false);
   }
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false); // хуки состояния для открытия//закрытия попапов
@@ -222,19 +222,18 @@ function App() {
               cards={cards}
             />
             <Route path="/signup">
-              <Register setIsRegisterPopupOpen={setIsRegisterPopupOpen}/>
-              <InfoTooltip isOpen={isRegisterPopupOpen}/>
+              <Register handleRegisterClick={handleRegisterClick} isOpen={isRegisterPopupOpen}/>
             </Route>
             <Route path="/signin">
               <Login handleLogin={handleLogin}/>
-              <InfoTooltip />
             </Route>
             <Route>
               {loggedIn ? <Redirect to='/main'/> : <Redirect to='/signin'/>}
             </Route>
           </Switch>
           <Footer/>
-
+          
+          <InfoTooltip isOpen={isRegisterPopupOpen}/>
           <EditProfilePopup
             isOpen={isEditProfilePopupOpen}
             onClose={closeAllPopups}
