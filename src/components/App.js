@@ -1,6 +1,6 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
-import { useState } from 'react';
+import { Route, Switch, useHistory, Redirect } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
@@ -10,10 +10,44 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import DeletePopup from './DeletePopup';
 import Register from './Register';
+import Login from './Login';
+import ProtectedRoute from './ProtectedRoute';
+import InfoTooltip from './InfoTooltip';
+import { getContent } from '../utils/mestoAuth.js'
 import { api } from '../utils/api.js';
 import { UserContext } from '../contexts/CurrentUserContext.js';
 
 function App() {
+
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+
+  const history = useHistory();
+
+  const tokenCheck = () => {
+    let jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      getContent(jwt)
+        .then((res) => {
+          console.log(res)
+          console.log(isRegisterPopupOpen)
+          if (res) {
+            setLoggedIn(true);
+            setUserEmail(res.data.email)
+            history.push('/main');
+          }
+        })
+        
+    }
+  }
+
+  useEffect(() => {
+    tokenCheck();
+  }, [loggedIn])
+
+  const handleLogin = () => {
+    setLoggedIn(true);
+  };
 
   const userInfo = React.useContext(UserContext);
 
@@ -29,7 +63,7 @@ function App() {
     setIsAddPlacePopupOpen(true);
   }
 
-  function handleDeleteCardsClick() {
+  function handleDeleteCardsClick() { //открывает попап с подтверждением удаления карточки
     SetIsDeleteCardsPopupOpen(true);
   }
 
@@ -40,18 +74,24 @@ function App() {
     });
   }
 
+  function handleRegisterClick() { //открывает попап с подтверждением регистрации
+    setIsRegisterPopupOpen(true);
+  }
+
   function closeAllPopups() {  //закрывает все попапы
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setSelectedCard(null);
     SetIsDeleteCardsPopupOpen(false);
+    handleRegisterClick(false);
   }
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false); // хуки состояния для открытия//закрытия попапов
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isDeleteCardsPopupOpen, SetIsDeleteCardsPopupOpen] = useState(false);
+  const [isRegisterPopupOpen, setIsRegisterPopupOpen] = useState(false);
 
   const [selectedCard, setSelectedCard] = useState(null); // хук состояния, запоминающий выбранную карточку, на фотографию которой нажали
 
@@ -154,6 +194,10 @@ function App() {
       })
   }
 
+  function handleLogout() {
+    setLoggedIn(false);
+  }
+
   const [isloading, setIsLoading] = React.useState(false);
 
   return (
@@ -161,40 +205,35 @@ function App() {
     <UserContext.Provider value={currentUser}>
       <div className="body">
         <div className="page">
-
+          <Header userEmail={userEmail} onQuit={handleLogout}/>
           <Switch>
+            <ProtectedRoute
+              path="/main"
+              loggedIn={loggedIn}
+              component={Main}
+
+              loadingIndicator={isloading}
+              onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onEditAvatar={handleEditAvatarClick}
+              onCardImageClick={handleCardClick}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+              cards={cards}
+            />
             <Route path="/signup">
-              <Register />
+              <Register setIsRegisterPopupOpen={setIsRegisterPopupOpen}/>
+              <InfoTooltip isOpen={isRegisterPopupOpen}/>
             </Route>
             <Route path="/signin">
-              <Footer />
+              <Login handleLogin={handleLogin}/>
+              <InfoTooltip />
             </Route>
-            <Route path="/main">
-              <Header />
-              <Main
-                loadingIndicator={isloading}
-                onEditProfile={handleEditProfileClick}
-                onAddPlace={handleAddPlaceClick}
-                onEditAvatar={handleEditAvatarClick}
-                onCardImageClick={handleCardClick}
-                onCardLike={handleCardLike}
-                onCardDelete={handleCardDelete}
-                cards={cards}
-              />
-              <Footer />
+            <Route>
+              {loggedIn ? <Redirect to='/main'/> : <Redirect to='/signin'/>}
             </Route>
           </Switch>
-{/* 
-          <Main
-            loadingIndicator={isloading}
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick}
-            onCardImageClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-            cards={cards}
-          /> */}
+          <Footer/>
 
           <EditProfilePopup
             isOpen={isEditProfilePopupOpen}
@@ -237,5 +276,5 @@ function App() {
 export default App;
 
 
-
-
+/// andrey@ya.ru
+/// 12345

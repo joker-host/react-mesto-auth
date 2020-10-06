@@ -1,13 +1,15 @@
 @import url(./__logo/header__logo.css);
 
 .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     width: 100%;
     margin: 0 auto 0 auto;
     box-sizing: border-box;
     padding: 45px 0 41px 0;
     margin-bottom: 36px;
     position: relative;
-    justify-content: flex-start;
 }
 
 header::before {
