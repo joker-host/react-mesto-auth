@@ -26,4 +26,9 @@
 @import url(./blocks/auth/__input/auth__input.css);
 @import url(./blocks/auth/__submit-button/auth__submit-button.css);
 @import url(./blocks/auth/__link-to-sign-in/auth__link-to-sign-in.css);
+<<<<<<< HEAD
+=======
+@import url(./blocks/auth/__error-field/auth__error-field.css);
+@import url(./blocks/auth/__input-container/auth__input-container.css);
+>>>>>>> 7afc69f4a567d553b150fc3c15db9316c357a23b
 @import url(./blocks/single-input/single-input.css);
