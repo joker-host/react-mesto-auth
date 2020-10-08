@@ -21,10 +21,7 @@ function App() {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
-<<<<<<< HEAD
-=======
   const [onFail, setOnFail] = useState('');
->>>>>>> 7afc69f4a567d553b150fc3c15db9316c357a23b
 
   const history = useHistory();
 
@@ -33,23 +30,15 @@ function App() {
     if (jwt) {
       getContent(jwt)
         .then((res) => {
-<<<<<<< HEAD
-          console.log(res)
-          console.log(isRegisterPopupOpen)
-=======
->>>>>>> 7afc69f4a567d553b150fc3c15db9316c357a23b
           if (res) {
             setLoggedIn(true);
             setUserEmail(res.data.email)
             history.push('/main');
           }
         })
-<<<<<<< HEAD
-=======
         .catch((err) => {
           console.log(err);
         })
->>>>>>> 7afc69f4a567d553b150fc3c15db9316c357a23b
         
     }
   }
@@ -87,15 +76,9 @@ function App() {
     });
   }
 
-<<<<<<< HEAD
-  function handleRegisterClick() { //открывает попап с подтверждением регистрации
-    setIsRegisterPopupOpen(true);
-  }
-=======
   // function handleRegisterClick() { //открывает попап с подтверждением регистрации
   //   setIsRegisterPopupOpen(true);
   // }
->>>>>>> 7afc69f4a567d553b150fc3c15db9316c357a23b
 
   function closeAllPopups() {  //закрывает все попапы
     setIsEditAvatarPopupOpen(false);
@@ -241,17 +224,10 @@ function App() {
               cards={cards}
             />
             <Route path="/signup">
-<<<<<<< HEAD
-              <Register handleRegisterClick={handleRegisterClick} isOpen={isRegisterPopupOpen}/>
-            </Route>
-            <Route path="/signin">
-              <Login handleLogin={handleLogin}/>
-=======
               <Register setIsRegisterPopupOpen={setIsRegisterPopupOpen} isOpen={isRegisterPopupOpen} setOnFail={setOnFail}/>
             </Route>
             <Route path="/signin">
               <Login handleLogin={handleLogin} onFail={onFail} setOnFail={setOnFail}/>
->>>>>>> 7afc69f4a567d553b150fc3c15db9316c357a23b
             </Route>
             <Route>
               {loggedIn ? <Redirect to='/main'/> : <Redirect to='/signin'/>}
@@ -259,11 +235,7 @@ function App() {
           </Switch>
           <Footer/>
           
-<<<<<<< HEAD
-          <InfoTooltip isOpen={isRegisterPopupOpen}/>
-=======
           <InfoTooltip isOpen={isRegisterPopupOpen} onClose={closeAllPopups}/>
->>>>>>> 7afc69f4a567d553b150fc3c15db9316c357a23b
           <EditProfilePopup
             isOpen={isEditProfilePopupOpen}
             onClose={closeAllPopups}
