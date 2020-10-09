@@ -104,35 +104,38 @@ function App() {
     cohort: '',
   });
 
-  const userInfoProm = new Promise((resolve, reject) => {
-    
-  })
-
-  React.useEffect(() => {
+  useEffect(() => {
     // получение объекта с информацией о пользователе
-    api
-      .getUserInfo()
-      .then((res) => {
-        setCurrentUser(res);
-      })
-      .catch(() => {
-        console.error('error');
-      });
+    const userInfoProm = new Promise((resolve, reject) => {
+      api
+        .getUserInfo()
+        .then((res) => {
+          resolve(res);
+        })
+        .catch(() => {
+          reject(console.error('error'));
+        });
+    });
+
+    //получение карточек с сервера
+    const cardsProm = new Promise((resolve, reject) => {
+      api
+        .getInitialCards()
+        .then((data) => {
+          resolve(data);
+        })
+        .catch(() => {
+          reject(console.error('error'));
+        });
+    });
+
+    Promise.all([userInfoProm, cardsProm]).then((data) => {
+      setCurrentUser(data[0]);
+      setCards(data[1]);
+    });
   }, []);
 
   const [cards, setCards] = useState([]); // актуальный массив с карточками
-
-  React.useEffect(() => {
-    //получение карточек с сервера
-    api
-      .getInitialCards()
-      .then((data) => {
-        setCards(data);
-      })
-      .catch(() => {
-        console.error('error');
-      });
-  }, []);
 
   function handleAddPlaceSubmit(values) {
     //добавление новой карточки
@@ -153,7 +156,7 @@ function App() {
       const newCards = cards.map((item) => (item._id === props._id ? newCard : item));
       setCards(newCards);
       setIsLoading(false);
-    }
+    };
 
     if (!isLiked) {
       api.likeCards(props._id).then(cardCallback);

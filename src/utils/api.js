@@ -1,12 +1,12 @@
 import { headers, baseUrl } from './constants.js';
 
-const handleResponse = result => {
+const handleResponse = (result) => {
   if (result.ok) {
     return result.json();
   } else {
     return Promise.reject(`Ошибка: ${result.status}`);
   }
-}
+};
 
 class Api {
   getInitialCards() {

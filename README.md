@@ -14,4 +14,3 @@
 
 ## Ссылка на проект
 https://joker-host.github.io/mesto/index.html
-
