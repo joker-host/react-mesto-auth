@@ -9,17 +9,17 @@
 @import url(../popup/__close-icon/_image/popup__close-icon_image.css);
 
 .popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(0, 0, 0, .5);
-    z-index: 2;
-    display: flex;
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s, opacity 0.3s;
-    justify-content: center;
-    align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  display: flex;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.3s;
+  justify-content: center;
+  align-items: center;
 }

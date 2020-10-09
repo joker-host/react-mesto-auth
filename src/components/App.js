@@ -13,12 +13,11 @@ import Register from './Register';
 import Login from './Login';
 import ProtectedRoute from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
-import { getContent } from '../utils/mestoAuth.js'
+import { getContent } from '../utils/mestoAuth.js';
 import { api } from '../utils/api.js';
 import { UserContext } from '../contexts/CurrentUserContext.js';
 
 function App() {
-
   const [loggedIn, setLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [onFail, setOnFail] = useState('');
@@ -26,61 +25,60 @@ function App() {
   const history = useHistory();
 
   const tokenCheck = () => {
-    let jwt = localStorage.getItem('jwt');
+    const jwt = localStorage.getItem('jwt');
     if (jwt) {
       getContent(jwt)
         .then((res) => {
           if (res) {
             setLoggedIn(true);
-            setUserEmail(res.data.email)
+            setUserEmail(res.data.email);
             history.push('/main');
           }
         })
         .catch((err) => {
           console.log(err);
-        })
-        
+        });
     }
-  }
+  };
 
   useEffect(() => {
     tokenCheck();
-  }, [loggedIn])
+  }, [loggedIn]);
 
   const handleLogin = () => {
     setLoggedIn(true);
   };
 
-  const userInfo = React.useContext(UserContext);
-
-  function handleEditAvatarClick() { //открывает попап с аватаром
+  function handleEditAvatarClick() {
+    //открывает попап с аватаром
     setIsEditAvatarPopupOpen(true);
   }
 
-  function handleEditProfileClick() { //открывает попап с профилем
+  function handleEditProfileClick() {
+    //открывает попап с профилем
     setIsEditProfilePopupOpen(true);
   }
 
-  function handleAddPlaceClick() { //открывает попап с добавлением карточки
+  function handleAddPlaceClick() {
+    //открывает попап с добавлением карточки
     setIsAddPlacePopupOpen(true);
   }
 
-  function handleDeleteCardsClick() { //открывает попап с подтверждением удаления карточки
+  function handleDeleteCardsClick() {
+    //открывает попап с подтверждением удаления карточки
     SetIsDeleteCardsPopupOpen(true);
   }
 
-  function handleCardClick(card) { //открывает попап с увеличенной фотографией
+  function handleCardClick(card) {
+    //открывает попап с увеличенной фотографией
     setSelectedCard({
       name: card.name,
-      link: card.link
+      link: card.link,
     });
   }
 
-  // function handleRegisterClick() { //открывает попап с подтверждением регистрации
-  //   setIsRegisterPopupOpen(true);
-  // }
-
-  function closeAllPopups() {  //закрывает все попапы
+  function closeAllPopups() {
+    //закрывает все попапы
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
@@ -97,103 +95,110 @@ function App() {
 
   const [selectedCard, setSelectedCard] = useState(null); // хук состояния, запоминающий выбранную карточку, на фотографию которой нажали
 
-  const [currentUser, setCurrentUser] = useState({  // хук, содержащий информцию о пользователе
+  const [currentUser, setCurrentUser] = useState({
+    // хук, содержащий информцию о пользователе
     name: '',
     about: '',
     avatar: '',
     _id: '',
-    cohort: ''
+    cohort: '',
   });
 
-  React.useEffect(() => { // получение объекта с информацией о пользователе
-    api.getUserInfo()
-      .then(res => {
+  const userInfoProm = new Promise((resolve, reject) => {
+    
+  })
+
+  React.useEffect(() => {
+    // получение объекта с информацией о пользователе
+    api
+      .getUserInfo()
+      .then((res) => {
         setCurrentUser(res);
       })
       .catch(() => {
         console.error('error');
-      })
-  }, [])
+      });
+  }, []);
 
   const [cards, setCards] = useState([]); // актуальный массив с карточками
 
-  React.useEffect(() => { //получение карточек с сервера
-    api.getInitialCards()
-      .then(data => {
+  React.useEffect(() => {
+    //получение карточек с сервера
+    api
+      .getInitialCards()
+      .then((data) => {
         setCards(data);
       })
       .catch(() => {
         console.error('error');
-      })
-  }, [])
+      });
+  }, []);
 
-  function handleAddPlaceSubmit(values) { //добавление новой карточки
-    setIsLoading(true)
-    api.addCards(values)
-      .then(newCard => {
-        setCards([...cards, newCard]);
-        setIsLoading(false)
-        closeAllPopups();
-      })
+  function handleAddPlaceSubmit(values) {
+    //добавление новой карточки
+    setIsLoading(true);
+    api.addCards(values).then((newCard) => {
+      setCards([...cards, newCard]);
+      setIsLoading(false);
+      closeAllPopups();
+    });
   }
 
-  function handleCardLike(props) {  //лайк/дизлайк карточки
-    setIsLoading(true)
-    const isLiked = props.likes.some(i => i._id === currentUser._id);
+  function handleCardLike(props) {
+    //лайк/дизлайк карточки
+    setIsLoading(true);
+    const isLiked = props.likes.some((i) => i._id === currentUser._id);
+
+    const cardCallback = (newCard) => {
+      const newCards = cards.map((item) => (item._id === props._id ? newCard : item));
+      setCards(newCards);
+      setIsLoading(false);
+    }
 
     if (!isLiked) {
-      api.likeCards(props._id)
-        .then((newCard) => {
-          const newCards = cards.map((item) => item._id === props._id ? newCard : item);
-          setCards(newCards);
-          setIsLoading(false);
-        })
+      api.likeCards(props._id).then(cardCallback);
     } else {
-      api.disLikeCards(props._id)
-        .then((newCard) => {
-          const newCards = cards.map((item) => item._id === props._id ? newCard : item);
-          setCards(newCards);
-          setIsLoading(false);
-        })
+      api.disLikeCards(props._id).then(cardCallback);
     }
   }
 
-  const [deleteCard, setDeleteCard] = React.useState({})
+  const [deleteCard, setDeleteCard] = React.useState({});
 
-  function handleCardDelete(props) { // удаление карточки
+  function handleCardDelete(props) {
+    // удаление карточки
     handleDeleteCardsClick();
     setDeleteCard(props);
   }
 
-  function deletedCard(deletedCard) { // удаление карточки
-    setIsLoading(true)
-    api.deleteCards(deletedCard._id)
-      .then(() => {
-        const newCards = cards.filter(card => card._id != deletedCard._id);
-        setCards(newCards);
-        setIsLoading(false)
-        closeAllPopups();
-      });
+  function deletedCard(deletedCard) {
+    // удаление карточки
+    setIsLoading(true);
+    api.deleteCards(deletedCard._id).then(() => {
+      const newCards = cards.filter((card) => card._id != deletedCard._id);
+      setCards(newCards);
+      setIsLoading(false);
+      closeAllPopups();
+    });
   }
 
-  function handleUpdateUser(values) { // изменение информции пользователя
-    setIsLoading(true)
-    api.setUserUnfo(values)
-      .then(res => {
-        setCurrentUser(res);
-        setIsLoading(false);
-        closeAllPopups();
-      })
+  function handleUpdateUser(values) {
+    // изменение информции пользователя
+    setIsLoading(true);
+    api.setUserUnfo(values).then((res) => {
+      setCurrentUser(res);
+      setIsLoading(false);
+      closeAllPopups();
+    });
   }
 
-  function handleUpdateAvatar(values) { // изменение аватара
-    setIsLoading(true)
-    api.changeAvatar(values)
-      .then(res => {
-        setCurrentUser(res);
-        setIsLoading(false)
-        closeAllPopups();
-      })
+  function handleUpdateAvatar(values) {
+    // изменение аватара
+    setIsLoading(true);
+    api.changeAvatar(values).then((res) => {
+      setCurrentUser(res);
+      setIsLoading(false);
+      closeAllPopups();
+    });
   }
 
   function handleLogout() {
@@ -203,17 +208,15 @@ function App() {
   const [isloading, setIsLoading] = React.useState(false);
 
   return (
-
     <UserContext.Provider value={currentUser}>
-      <div className="body">
-        <div className="page">
-          <Header userEmail={userEmail} onQuit={handleLogout}/>
+      <div className='body'>
+        <div className='page'>
+          <Header userEmail={userEmail} onQuit={handleLogout} />
           <Switch>
             <ProtectedRoute
-              path="/main"
+              path='/main'
               loggedIn={loggedIn}
               component={Main}
-
               loadingIndicator={isloading}
               onEditProfile={handleEditProfileClick}
               onAddPlace={handleAddPlaceClick}
@@ -223,19 +226,21 @@ function App() {
               onCardDelete={handleCardDelete}
               cards={cards}
             />
-            <Route path="/signup">
-              <Register setIsRegisterPopupOpen={setIsRegisterPopupOpen} isOpen={isRegisterPopupOpen} setOnFail={setOnFail}/>
+            <Route path='/signup'>
+              <Register
+                setIsRegisterPopupOpen={setIsRegisterPopupOpen}
+                isOpen={isRegisterPopupOpen}
+                setOnFail={setOnFail}
+              />
             </Route>
-            <Route path="/signin">
-              <Login handleLogin={handleLogin} onFail={onFail} setOnFail={setOnFail}/>
+            <Route path='/signin'>
+              <Login handleLogin={handleLogin} onFail={onFail} setOnFail={setOnFail} />
             </Route>
-            <Route>
-              {loggedIn ? <Redirect to='/main'/> : <Redirect to='/signin'/>}
-            </Route>
+            <Route>{loggedIn ? <Redirect to='/main' /> : <Redirect to='/signin' />}</Route>
           </Switch>
-          <Footer/>
-          
-          <InfoTooltip isOpen={isRegisterPopupOpen} onClose={closeAllPopups}/>
+          <Footer />
+
+          <InfoTooltip isOpen={isRegisterPopupOpen} onClose={closeAllPopups} />
           <EditProfilePopup
             isOpen={isEditProfilePopupOpen}
             onClose={closeAllPopups}
@@ -267,7 +272,6 @@ function App() {
             onDeleteCard={deletedCard}
             loadingIndicator={isloading}
           />
-
         </div>
       </div>
     </UserContext.Provider>
@@ -275,7 +279,6 @@ function App() {
 }
 
 export default App;
-
 
 /// andrey@ya.ru
 /// 12345

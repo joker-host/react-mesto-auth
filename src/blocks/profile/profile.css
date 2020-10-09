@@ -9,15 +9,15 @@
 @import url(./__avatar-wrapper/profile__avatar-wrapper.css);
 
 .profile {
-    max-width: 882px;
-    margin: auto;
-    display: flex;
-    align-items: center;
-    margin-bottom: 50px;
+  max-width: 882px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  margin-bottom: 50px;
 }
 
 @media (max-width: 800px) {
-    .profile {
-        flex-direction: column;
-    }
+  .profile {
+    flex-direction: column;
+  }
 }

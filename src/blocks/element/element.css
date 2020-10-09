@@ -8,9 +8,9 @@
 @import url(./__delete/_visible/element__delete_visible.css);
 
 .element {
-    display: flex;
-    flex-direction: column;
-    width: 282px;
-    height: 362px;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 282px;
+  height: 362px;
+  position: relative;
 }
